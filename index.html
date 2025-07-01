@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Relax - Audio Reactive</title>
+  <title>Relax</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600&display=swap');
     :root {
@@ -50,8 +50,12 @@
       padding: 2rem;
     }
     .avatar {
-      width: 140px;
-      height: 140px;
+      width: 18vw;
+      height: 18vw;
+      max-width: 160px;
+      max-height: 160px;
+      min-width: 100px;
+      min-height: 100px;
       border-radius: 50%;
       border: 3px solid var(--purple);
       overflow: hidden;
@@ -182,6 +186,36 @@
       font-size: 0.85rem;
       color: #aaa;
     }
+
+    @media (max-width: 768px) {
+      .side, .main {
+        flex: 0 0 100%;
+        max-width: 100%;
+        padding: 1rem;
+      }
+
+      .terminal {
+        font-size: 0.85rem;
+      }
+
+      .name {
+        font-size: 1.5rem;
+      }
+
+      .socials {
+        gap: 0.7rem;
+      }
+
+      .socials a {
+        width: 40px;
+        height: 40px;
+      }
+
+      .socials img {
+        width: 20px;
+        height: 20px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -227,10 +261,8 @@
     </div>
   </div>
 
-  <!-- ✅ MUSIC VIA RAW GITHUB LINK -->
   <audio id="bgAudio" src="https://github.com/LuaSecurity/Relax/raw/refs/heads/main/omae.mp3" autoplay loop crossorigin="anonymous"></audio>
 
-  <!-- 🔊 AUDIO REACTIVE JS -->
   <script>
     window.addEventListener('load', () => {
       const audio = document.getElementById('bgAudio');
@@ -262,6 +294,7 @@
 
       document.body.addEventListener('click', () => {
         if (ctx.state === 'suspended') ctx.resume();
+        audio.play().catch(err => console.warn("Playback failed:", err));
       }, { once: true });
 
       animate();
