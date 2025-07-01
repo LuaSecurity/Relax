@@ -84,12 +84,7 @@
       border: 3px solid var(--purple);
       overflow: hidden;
       margin-bottom: 1.5rem;
-      animation: pulseBeat 0.92s infinite;
-    }
-
-    @keyframes pulseBeat {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 0px var(--purple); }
-      50% { transform: scale(1.08); box-shadow: 0 0 15px var(--purple); }
+      transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
     }
 
     .avatar img {
@@ -265,7 +260,7 @@
 </head>
 <body>
   <div class="side">
-    <div class="avatar">
+    <div class="avatar" id="avatar">
       <img src="https://kudos.tv/cdn/shop/files/Pixel_Landscape_300x.png?v=1679069333" alt="Profile">
     </div>
     <div class="name">Relax</div>
@@ -313,6 +308,44 @@
   </div>
 
   <!-- 🔊 Música de fundo via GitHub RAW -->
-  <audio src="https://raw.githubusercontent.com/LuaSecurity/Relax/main/omae.mp3" autoplay loop></audio>
+  <audio id="bgAudio" src="https://raw.githubusercontent.com/LuaSecurity/Relax/main/omae.mp3" autoplay loop crossorigin="anonymous"></audio>
+
+  <!-- 🔁 Detecção de batida em tempo real -->
+  <script>
+    window.addEventListener('load', () => {
+      const audio = document.getElementById('bgAudio');
+      const avatar = document.getElementById('avatar');
+
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioContext();
+      const src = ctx.createMediaElementSource(audio);
+      const analyser = ctx.createAnalyser();
+
+      analyser.fftSize = 64;
+      src.connect(analyser);
+      analyser.connect(ctx.destination);
+
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+      function animate() {
+        analyser.getByteFrequencyData(dataArray);
+        const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+
+        const scale = 1 + (avg / 255) * 0.4;
+        const glow = (avg / 255) * 20;
+
+        avatar.style.transform = `scale(${scale})`;
+        avatar.style.boxShadow = `0 0 ${glow}px rgba(161,0,255,0.6)`;
+
+        requestAnimationFrame(animate);
+      }
+
+      document.body.addEventListener('click', () => {
+        if (ctx.state === 'suspended') ctx.resume();
+      }, { once: true });
+
+      animate();
+    });
+  </script>
 </body>
 </html>
