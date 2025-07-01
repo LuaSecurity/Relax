@@ -55,13 +55,19 @@
       border-radius: 50%;
       border: 3px solid var(--purple);
       overflow: hidden;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
     }
     .avatar img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+    canvas#wave {
+      width: 100%;
+      height: 60px;
+      display: block;
+      margin-top: 1rem;
     }
     .name {
       font: 1.8rem 'Share Tech Mono', monospace;
@@ -73,6 +79,8 @@
       margin-top: 2rem;
       display: flex;
       gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
     .socials a {
       width: 48px;
@@ -189,6 +197,7 @@
     <div class="avatar" id="avatar">
       <img src="https://kudos.tv/cdn/shop/files/Pixel_Landscape_300x.png?v=1679069333" alt="Avatar">
     </div>
+    <canvas id="wave"></canvas>
     <div class="name">Relax</div>
     <div class="socials">
       <a href="https://discord.com/users/1246471078486737037" target="_blank">
@@ -227,43 +236,51 @@
     </div>
   </div>
 
-  <audio id="bgAudio" src="https://github.com/LuaSecurity/Relax/raw/refs/heads/main/omae.mp3" autoplay loop crossorigin="anonymous"></audio>
+  <audio id="bgAudio" src="https://github.com/LuaSecurity/Relax/raw/refs/heads/main/omae.mp3" preload="auto" loop crossorigin="anonymous"></audio>
 
   <script>
-    window.addEventListener('load', () => {
-      const audio = document.getElementById('bgAudio');
-      const avatar = document.getElementById('avatar');
+    const audio = document.getElementById('bgAudio');
+    const canvas = document.getElementById('wave');
+    const ctxCanvas = canvas.getContext('2d');
 
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AudioContext();
-      const src = ctx.createMediaElementSource(audio);
-      const analyser = ctx.createAnalyser();
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioContext();
+    const source = ctx.createMediaElementSource(audio);
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 256;
 
-      analyser.fftSize = 64;
-      src.connect(analyser);
-      analyser.connect(ctx.destination);
+    source.connect(analyser);
+    analyser.connect(ctx.destination);
 
-      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
 
-      function animate() {
-        analyser.getByteFrequencyData(dataArray);
-        const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+    function drawWave() {
+      requestAnimationFrame(drawWave);
+      analyser.getByteFrequencyData(dataArray);
 
-        const scale = 1 + (avg / 255) * 0.4;
-        const glow = (avg / 255) * 20;
+      const width = canvas.width = canvas.offsetWidth;
+      const height = canvas.height = canvas.offsetHeight;
 
-        avatar.style.transform = `scale(${scale})`;
-        avatar.style.boxShadow = `0 0 ${glow}px rgba(161,0,255,0.6)`;
+      ctxCanvas.clearRect(0, 0, width, height);
 
-        requestAnimationFrame(animate);
+      const barWidth = (width / bufferLength) * 2.5;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        const barHeight = dataArray[i] / 255 * height;
+        ctxCanvas.fillStyle = `rgba(161, 0, 255, 0.6)`;
+        ctxCanvas.fillRect(x, height - barHeight, barWidth, barHeight);
+        x += barWidth + 1;
       }
+    }
 
-      document.body.addEventListener('click', () => {
-        if (ctx.state === 'suspended') ctx.resume();
-      }, { once: true });
+    document.body.addEventListener('click', () => {
+      if (ctx.state === 'suspended') ctx.resume();
+      audio.play();
+    }, { once: true });
 
-      animate();
-    });
+    drawWave();
   </script>
 </body>
 </html>
