@@ -261,40 +261,37 @@
     </div>
   </div>
 
-  <audio id="bgAudio" src="https://github.com/LuaSecurity/Relax/raw/refs/heads/main/omae.mp3" autoplay loop crossorigin="anonymous"></audio>
+  <!-- 🎵 YouTube Audio Embed -->
+  <iframe
+    id="yt-audio"
+    width="0"
+    height="0"
+    src="https://www.youtube.com/embed/Z2eRJqJmgps?autoplay=1&loop=1&playlist=Z2eRJqJmgps"
+    frameborder="0"
+    allow="autoplay"
+    allowfullscreen
+  ></iframe>
 
   <script>
     window.addEventListener('load', () => {
-      const audio = document.getElementById('bgAudio');
       const avatar = document.getElementById('avatar');
-
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AudioContext();
-      const src = ctx.createMediaElementSource(audio);
-      const analyser = ctx.createAnalyser();
-
-      analyser.fftSize = 64;
-      src.connect(analyser);
-      analyser.connect(ctx.destination);
-
-      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+      let pulse = 0;
 
       function animate() {
-        analyser.getByteFrequencyData(dataArray);
-        const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
-
-        const scale = 1 + (avg / 255) * 0.4;
-        const glow = (avg / 255) * 20;
+        const glow = 10 + 10 * Math.abs(Math.sin(pulse));
+        const scale = 1 + 0.05 * Math.sin(pulse);
 
         avatar.style.transform = `scale(${scale})`;
         avatar.style.boxShadow = `0 0 ${glow}px rgba(161,0,255,0.6)`;
 
+        pulse += 0.05;
         requestAnimationFrame(animate);
       }
 
+      // Ensure autoplay on user interaction (required by browser policies)
       document.body.addEventListener('click', () => {
-        if (ctx.state === 'suspended') ctx.resume();
-        audio.play().catch(err => console.warn("Playback failed:", err));
+        const iframe = document.getElementById('yt-audio');
+        iframe.src += ""; // forces refresh for autoplay if blocked
       }, { once: true });
 
       animate();
