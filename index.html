@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Relax</title>
+  <title>Relax - LuaU Developer & Reverse Engineer</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600&display=swap');
-
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono:wght@400&family=Rajdhani:wght@300;400;600;700&display=swap');
+    
     :root {
       --black: #0a0a0a;
       --purple: #a100ff;
@@ -15,6 +15,7 @@
       --accent-fade: rgba(161, 0, 255, 0.3);
       --grid: rgba(255, 255, 255, 0.03);
       --transition: 0.3s ease;
+      --glow: 0 0 20px rgba(161, 0, 255, 0.4);
     }
 
     * {
@@ -26,7 +27,7 @@
     html, body {
       height: 100%;
       width: 100%;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     body {
@@ -37,105 +38,224 @@
       flex-direction: row;
       position: relative;
       flex-wrap: wrap;
+      min-height: 100vh;
     }
 
+    /* Animated background */
     body::before,
     body::after {
       content: "";
-      position: absolute;
+      position: fixed;
       inset: 0;
       z-index: 0;
+      pointer-events: none;
     }
 
     body::before {
-      background: radial-gradient(circle at center, rgba(161, 0, 255, 0.07), transparent 60%);
-      animation: pulseBg 15s infinite ease-in-out;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(161, 0, 255, 0.1), transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(161, 0, 255, 0.05), transparent 50%);
+      animation: pulseBg 20s infinite ease-in-out;
     }
 
     body::after {
       background-image:
         repeating-linear-gradient(0deg, transparent, transparent 49px, var(--grid) 50px),
         repeating-linear-gradient(90deg, transparent, transparent 49px, var(--grid) 50px);
-      pointer-events: none;
     }
 
     @keyframes pulseBg {
-      0%, 100% { transform: scale(1); opacity: 0.05; }
-      50% { transform: scale(1.2); opacity: 0.12; }
+      0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.3; }
+      33% { transform: scale(1.1) rotate(1deg); opacity: 0.5; }
+      66% { transform: scale(0.9) rotate(-1deg); opacity: 0.2; }
+    }
+
+    /* Floating particles */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: var(--purple);
+      border-radius: 50%;
+      animation: float 15s infinite linear;
+      opacity: 0.6;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) translateX(0px); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { transform: translateY(-100px) translateX(100px); opacity: 0; }
     }
 
     .side {
       flex: 1 1 100%;
       max-width: 100%;
-      background: linear-gradient(to bottom right, #0f0f0f, #1a0a1f);
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a0a1f 50%, #0f0f0f 100%);
       border-right: 1px solid var(--accent-fade);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 1;
+      z-index: 2;
       padding: 2rem;
+      position: relative;
     }
 
     .avatar {
-      width: 140px;
-      height: 140px;
+      width: 160px;
+      height: 160px;
       border-radius: 50%;
       border: 3px solid var(--purple);
       overflow: hidden;
       margin-bottom: 1.5rem;
-      animation: pulseBeat 0.92s infinite;
+      position: relative;
+      animation: pulseBeat 2s infinite ease-in-out;
+    }
+
+    .avatar::before {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      background: conic-gradient(var(--purple), transparent, var(--purple));
+      animation: rotate 3s linear infinite;
+      z-index: -1;
     }
 
     @keyframes pulseBeat {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 0px var(--purple); }
-      50% { transform: scale(1.08); box-shadow: 0 0 15px var(--purple); }
+      0%, 100% { transform: scale(1); box-shadow: var(--glow); }
+      50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(161, 0, 255, 0.6); }
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
     .avatar img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      position: relative;
+      z-index: 1;
     }
 
     .name {
-      font: 1.8rem 'Share Tech Mono', monospace;
-      letter-spacing: 2px;
+      font: 2.2rem 'Share Tech Mono', monospace;
+      letter-spacing: 3px;
       color: var(--purple);
       text-align: center;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 10px rgba(161, 0, 255, 0.5);
+    }
+
+    .title {
+      font-size: 1rem;
+      color: var(--white);
+      text-align: center;
+      margin-bottom: 2rem;
+      opacity: 0.8;
+      font-weight: 300;
     }
 
     .socials {
-      margin-top: 2rem;
       display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
+      gap: 1.5rem;
       justify-content: center;
+      margin-bottom: 2rem;
     }
 
     .socials a {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 48px;
-      height: 48px;
-      background-color: rgba(161, 0, 255, 0.1);
+      width: 56px;
+      height: 56px;
+      background: rgba(161, 0, 255, 0.1);
       border: 2px solid var(--purple);
       border-radius: 50%;
-      box-shadow: 0 0 10px rgba(161, 0, 255, 0.3);
       transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .socials a::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--purple);
+      transform: scale(0);
+      border-radius: 50%;
+      transition: transform var(--transition);
+      z-index: 0;
+    }
+
+    .socials a:hover::before {
+      transform: scale(1);
     }
 
     .socials a:hover {
-      transform: scale(1.15);
-      background-color: var(--purple);
-      box-shadow: 0 0 18px rgba(161, 0, 255, 0.6);
+      transform: scale(1.1) translateY(-2px);
+      box-shadow: var(--glow);
     }
 
     .socials img {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       filter: invert(1);
+      position: relative;
+      z-index: 1;
+      transition: filter var(--transition);
+    }
+
+    .socials a:hover img {
+      filter: invert(0);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--accent-fade);
+      border-radius: 8px;
+      transition: all var(--transition);
+    }
+
+    .stat:hover {
+      background: rgba(161, 0, 255, 0.05);
+      transform: translateY(-2px);
+    }
+
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--purple);
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.2rem;
     }
 
     .main {
@@ -144,110 +264,260 @@
       padding: 2.5rem;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      z-index: 1;
+      justify-content: flex-start;
+      z-index: 2;
+      overflow-y: auto;
     }
 
     .terminal {
-      background-color: rgba(255, 255, 255, 0.01);
+      background: rgba(0, 0, 0, 0.3);
       border: 1px solid var(--accent-fade);
-      border-radius: 8px;
+      border-radius: 12px;
       padding: 2rem;
       font-family: 'Share Tech Mono', monospace;
       font-size: 0.95rem;
-      line-height: 1.5;
+      line-height: 1.6;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
     }
 
     .terminal::before {
-      content: "> Accessing profile...";
-      display: block;
-      margin-bottom: 1rem;
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--purple), transparent);
+      animation: scan 2s infinite;
+    }
+
+    @keyframes scan {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--accent-fade);
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 0.5rem;
+      margin-right: 1rem;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .dot.red { background: #ff5f56; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green { background: #27ca3f; }
+
+    .terminal-title {
       color: var(--purple);
-      animation: blink 1s infinite step-end;
+      font-size: 0.9rem;
+      animation: blink 1.5s infinite step-end;
     }
 
     @keyframes blink {
       50% { opacity: 0; }
     }
 
+    .section {
+      margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+      color: var(--purple);
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-title::before {
+      content: '>';
+      color: var(--white);
+    }
+
     .bio-line {
       color: #ccc;
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.6rem;
+      padding-left: 1rem;
+    }
+
+    .bio-line::before {
+      content: '// ';
+      color: var(--purple);
+      opacity: 0.7;
     }
 
     .skills {
       display: flex;
-      gap: 0.7rem;
+      gap: 0.8rem;
       flex-wrap: wrap;
-      margin-top: 1.5rem;
+      margin-top: 1rem;
     }
 
     .skill {
-      background-color: var(--purple-fade);
+      background: linear-gradient(135deg, var(--purple-fade), rgba(161, 0, 255, 0.2));
       border: 1px solid var(--purple);
-      padding: 0.4rem 0.8rem;
-      border-radius: 6px;
-      font-size: 0.8rem;
+      padding: 0.6rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
       color: var(--white);
-      transition: transform var(--transition);
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .skill:hover::before {
+      left: 100%;
     }
 
     .skill:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 8px var(--purple);
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: var(--glow);
+    }
+
+    .projects-grid {
+      display: grid;
+      gap: 1.5rem;
+      margin-top: 1rem;
     }
 
     .project-box {
-      margin-top: 2rem;
-      padding: 1.2rem;
-      background-color: #0d0d0d;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #0d0d0d, #1a0a1f);
       border-left: 4px solid var(--purple);
-      border-radius: 6px;
-      box-shadow: 0 0 10px rgba(161, 0, 255, 0.1);
-      font-family: 'Share Tech Mono', monospace;
+      border-radius: 12px;
       cursor: pointer;
-      transition: background-color var(--transition), transform var(--transition);
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(161, 0, 255, 0.1), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .project-box:hover::before {
+      opacity: 1;
     }
 
     .project-box:hover {
-      background-color: rgba(161, 0, 255, 0.05);
-      transform: translateY(-3px);
-      box-shadow: 0 0 14px var(--accent-fade);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(161, 0, 255, 0.2);
+      border-left-width: 6px;
+    }
+
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
     }
 
     .project-title {
       color: var(--purple);
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .project-status {
+      background: rgba(39, 202, 63, 0.2);
+      color: #27ca3f;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      border: 1px solid #27ca3f;
+    }
+
+    .project-status.coming-soon {
+      background: rgba(255, 189, 46, 0.2);
+      color: #ffbd2e;
+      border-color: #ffbd2e;
     }
 
     .project-desc {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: #ccc;
-      line-height: 1.4;
+      line-height: 1.5;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 1rem;
     }
 
-    .future-project {
-      margin-top: 2rem;
-      font-family: 'Share Tech Mono', monospace;
+    .project-tech {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tech-tag {
+      background: rgba(255, 255, 255, 0.1);
       color: var(--white);
-      padding: 1rem;
-      border-left: 4px solid #fff;
-      background-color: rgba(255, 255, 255, 0.02);
-      border-radius: 6px;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+      padding: 0.2rem 0.6rem;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    .future-project-title {
-      color: var(--purple);
-      font-weight: bold;
-      font-size: 1rem;
-      margin-bottom: 0.4rem;
+    .contact-info {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--accent-fade);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 2rem;
     }
 
-    .future-project-desc {
-      font-size: 0.85rem;
-      color: #aaa;
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .contact-item:last-child {
+      border-bottom: none;
+    }
+
+    .contact-icon {
+      width: 20px;
+      height: 20px;
+      filter: invert(1);
     }
 
     @media (min-width: 768px) {
@@ -255,70 +525,335 @@
         flex: 0 0 35%;
         max-width: 35%;
       }
-
       .main {
         flex: 0 0 65%;
         max-width: 65%;
       }
+      .projects-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .projects-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--black);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--purple);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(161, 0, 255, 0.8);
     }
   </style>
 </head>
 <body>
+  <!-- Floating particles -->
+  <div class="particles">
+    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+    <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+    <div class="particle" style="left: 40%; animation-delay: 6s;"></div>
+    <div class="particle" style="left: 50%; animation-delay: 8s;"></div>
+    <div class="particle" style="left: 60%; animation-delay: 10s;"></div>
+    <div class="particle" style="left: 70%; animation-delay: 12s;"></div>
+    <div class="particle" style="left: 80%; animation-delay: 14s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: 16s;"></div>
+  </div>
+
   <div class="side">
     <div class="avatar">
-      <img src="https://kudos.tv/cdn/shop/files/Pixel_Landscape_300x.png?v=1679069333" alt="Profile">
+      <img src="https://kudos.tv/cdn/shop/files/Pixel_Landscape_300x.png?v=1679069333" alt="Relax Profile">
     </div>
-    <div class="name">Relax</div>
+    <div class="name">RELAX</div>
+    <div class="title">LuaU Developer & Reverse Engineer</div>
+    
     <div class="socials">
-      <a href="https://discord.com/users/1246471078486737037" target="_blank">
+      <a href="https://discord.com/users/1246471078486737037" target="_blank" title="Discord">
         <img src="https://img.icons8.com/ios-filled/50/discord-logo.png" alt="Discord">
       </a>
+      <a href="https://www.roblox.com/users/YOUR_ROBLOX_ID/profile" target="_blank" title="Roblox">
+        <img src="https://img.icons8.com/ios-filled/50/roblox.png" alt="Roblox">
+      </a>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-number">3+</div>
+        <div class="stat-label">Years Experience</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">10K+</div>
+        <div class="stat-label">Users Served</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">5+</div>
+        <div class="stat-label">Active Projects</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Support</div>
+      </div>
     </div>
   </div>
 
   <div class="main">
     <div class="terminal">
-      <div class="bio-line">-> // LuaU programmer and Creator of Lua Serverside</div>
-      <div class="bio-line">-> // Specialized in Reverse Engineering and Exploits Development</div>
-      <div class="bio-line">-> // Currently learning C++ and other programming languages</div>
-
-      <div class="skills">
-        <div class="skill">LuaU</div>
-        <div class="skill">C++</div>
-        <div class="skill">Reverse Engineering</div>
-        <div class="skill">Exploit Developer</div>
+      <div class="terminal-header">
+        <div class="terminal-dots">
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+        </div>
+        <div class="terminal-title">relax@system:~$ cat profile.txt</div>
       </div>
 
-      <div class="project-box" onclick="window.open('https://discord.gg/kAWEV4ec6K', '_blank')">
-        <div class="project-title">[ Lua Serverside ]</div>
-        <div class="project-desc">
-          Advanced executor that can execute serversided code in various Roblox games.
+      <div class="section">
+        <div class="section-title">About</div>
+        <div class="bio-line">Specialized LuaU programmer with expertise in Roblox game development</div>
+        <div class="bio-line">Advanced reverse engineering and exploit development capabilities</div>
+        <div class="bio-line">Currently expanding skillset with C++ and low-level programming</div>
+        <div class="bio-line">Creator of multiple successful serverside execution tools</div>
+        
+        <div class="skills">
+          <div class="skill">LuaU</div>
+          <div class="skill">C++</div>
+          <div class="skill">Reverse Engineering</div>
+          <div class="skill">Exploit Development</div>
+          <div class="skill">Assembly</div>
+          <div class="skill">Memory Manipulation</div>
+          <div class="skill">Game Hacking</div>
+          <div class="skill">Roblox API</div>
         </div>
       </div>
 
-      <div class="project-box" onclick="window.open('https://discord.gg/exploiting', '_blank')">
-        <div class="project-title">[ Exoliner ]</div>
-        <div class="project-desc">
-          Infector on Exoliner Serverside.
+      <div class="section">
+        <div class="section-title">Featured Projects</div>
+        <div class="projects-grid">
+          <div class="project-box" onclick="window.open('https://discord.gg/kAWEV4ec6K', '_blank')">
+            <div class="project-header">
+              <div class="project-title">Lua Serverside</div>
+              <div class="project-status">Active</div>
+            </div>
+            <div class="project-desc">
+              Advanced serverside executor capable of running Lua code across multiple Roblox games with enhanced security and performance features.
+            </div>
+            <div class="project-tech">
+              <div class="tech-tag">LuaU</div>
+              <div class="tech-tag">C++</div>
+              <div class="tech-tag">Roblox API</div>
+            </div>
+          </div>
+
+          <div class="project-box" onclick="window.open('https://discord.gg/exploiting', '_blank')">
+            <div class="project-header">
+              <div class="project-title">Exoliner</div>
+              <div class="project-status">Active</div>
+            </div>
+            <div class="project-desc">
+              Sophisticated infection system for Exoliner Serverside with advanced payload delivery and persistence mechanisms.
+            </div>
+            <div class="project-tech">
+              <div class="tech-tag">LuaU</div>
+              <div class="tech-tag">Networking</div>
+              <div class="tech-tag">Injection</div>
+            </div>
+          </div>
+
+          <div class="project-box" onclick="window.open('https://discord.gg/Mwvj3zU6En', '_blank')">
+            <div class="project-header">
+              <div class="project-title">Lunar Hub</div>
+              <div class="project-status">Active</div>
+            </div>
+            <div class="project-desc">
+              Comprehensive Mad City Season 7 enhancement suite featuring automated systems, server manipulation tools, and advanced targeting systems.
+            </div>
+            <div class="project-tech">
+              <div class="tech-tag">LuaU</div>
+              <div class="tech-tag">GUI</div>
+              <div class="tech-tag">Automation</div>
+            </div>
+          </div>
+
+          <div class="project-box">
+            <div class="project-header">
+              <div class="project-title">Relaxed Obfuscator</div>
+              <div class="project-status coming-soon">Coming Soon</div>
+            </div>
+            <div class="project-desc">
+              Next-generation Lua code obfuscation tool designed to protect intellectual property with military-grade encryption and anti-reverse engineering techniques.
+            </div>
+            <div class="project-tech">
+              <div class="tech-tag">C++</div>
+              <div class="tech-tag">Cryptography</div>
+              <div class="tech-tag">Anti-Debug</div>
+            </div>
+          </div>
+
+          <div class="project-box">
+            <div class="project-header">
+              <div class="project-title">Universal Injector</div>
+              <div class="project-status coming-soon">In Development</div>
+            </div>
+            <div class="project-desc">
+              Cross-platform DLL injection framework with support for multiple injection techniques and stealth capabilities.
+            </div>
+            <div class="project-tech">
+              <div class="tech-tag">C++</div>
+              <div class="tech-tag">WinAPI</div>
+              <div class="tech-tag">Assembly</div>
+            </div>
+          </div>
+
+          <div class="project-box">
+            <div class="project-header">
+              <div class="project-title">Memory Scanner Pro</div>
+              <div class="project-status coming-soon">Planning</div>
+            </div>
+            <div class="project-desc">
+              Advanced memory analysis tool for reverse engineering applications with pattern recognition and automated signature generation.
+            </div>
+            <div class="project-tech">
+              <div class="tech-tag">C++</div>
+              <div class="tech-tag">Memory Analysis</div>
+              <div class="tech-tag">Pattern Matching</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="project-box" onclick="window.open('https://discord.gg/Mwvj3zU6En', '_blank')">
-        <div class="project-title">[ Lunar Hub ]</div>
-        <div class="project-desc">
-          Mad City Season 7 cheat menu featuring Auto robbers, Server Crashers, Aimbots, and more.
+      <div class="contact-info">
+        <div class="section-title">Get In Touch</div>
+        <div class="contact-item">
+          <img src="https://img.icons8.com/ios-filled/50/discord-logo.png" alt="Discord" class="contact-icon">
+          <span>Available for custom development and consulting</span>
         </div>
-      </div>
-
-      <div class="future-project">
-        <div class="future-project-title">>> Future Project: Relaxed Obfuscator</div>
-        <div class="future-project-desc">
-          Upcoming Lua obfuscator designed to protect your code from reverse engineering.
+        <div class="contact-item">
+          <img src="https://img.icons8.com/ios-filled/50/roblox.png" alt="Roblox" class="contact-icon">
+          <span>Specialized in Roblox game enhancement projects</span>
+        </div>
+        <div class="contact-item">
+          <img src="https://img.icons8.com/ios-filled/50/code.png" alt="Code" class="contact-icon">
+          <span>Open to collaboration on reverse engineering projects</span>
         </div>
       </div>
     </div>
   </div>
 
-  <audio src="omae.mp3" autoplay loop></audio>
+  <script>
+    // Add some interactive effects
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animate skill tags on hover
+      const skills = document.querySelectorAll('.skill');
+      skills.forEach(skill => {
+        skill.addEventListener('mouseenter', function() {
+          this.style.transform = 'translateY(-3px) scale(1.05) rotateZ(2deg)';
+        });
+        skill.addEventListener('mouseleave', function() {
+          this.style.transform = 'translateY(0) scale(1) rotateZ(0deg)';
+        });
+      });
+
+      // Add typing effect to terminal title
+      const terminalTitle = document.querySelector('.terminal-title');
+      const originalText = terminalTitle.textContent;
+      terminalTitle.textContent = '';
+      
+      let i = 0;
+      const typeWriter = () => {
+        if (i < originalText.length) {
+          terminalTitle.textContent += originalText.charAt(i);
+          i++;
+          setTimeout(typeWriter, 50);
+        }
+      };
+      
+      setTimeout(typeWriter, 1000);
+
+      // Add glitch effect to name on click
+      const nameElement = document.querySelector('.name');
+      nameElement.addEventListener('click', function() {
+        this.style.animation = 'none';
+        this.style.textShadow = '2px 0 #ff0000, -2px 0 #00ff00, 0 2px #0000ff';
+        setTimeout(() => {
+          this.style.textShadow = '0 0 10px rgba(161, 0, 255, 0.5)';
+        }, 200);
+      });
+
+      // Smooth scroll for better UX
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+          });
+        });
+      });
+    });
+
+    // Add matrix rain effect (optional)
+    function createMatrixRain() {
+      const canvas = document.createElement('canvas');
+      canvas.style.position = 'fixed';
+      canvas.style.top = '0';
+      canvas.style.left = '0';
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+      canvas.style.pointerEvents = 'none';
+      canvas.style.zIndex = '0';
+      canvas.style.opacity = '0.1';
+      document.body.appendChild(canvas);
+
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+      const matrixArray = matrix.split("");
+
+      const fontSize = 10;
+      const columns = canvas.width / fontSize;
+
+      const drops = [];
+      for(let x = 0; x < columns; x++) {
+        drops[x] = 1;
+      }
+
+      function draw() {
+        ctx.fillStyle = 'rgba(10, 10, 10, 0.04)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#a100ff';
+        ctx.font = fontSize + 'px Share Tech Mono';
+
+        for(let i = 0; i < drops.length; i++) {
+          const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+          if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+      }
+
+      setInterval(draw, 35);
+    }
+
+    // Uncomment to enable matrix rain effect
+    // createMatrixRain();
+  </script>
 </body>
 </html>
