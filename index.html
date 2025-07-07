@@ -3,16 +3,14 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Relax - Exploit Developer</title>
+  <title>Relax</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600&display=swap');
-    
+
     :root {
       --black: #0a0a0a;
       --purple: #a100ff;
       --white: #f4f4f4;
-      --green: #00ff41;
-      --red: #ff0040;
       --purple-fade: rgba(161, 0, 255, 0.1);
       --accent-fade: rgba(161, 0, 255, 0.3);
       --grid: rgba(255, 255, 255, 0.03);
@@ -28,100 +26,70 @@
     html, body {
       height: 100%;
       width: 100%;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
     body {
       font-family: 'Rajdhani', sans-serif;
       background-color: var(--black);
       color: var(--white);
-      position: relative;
-    }
-
-    /* Matrix Rain Effect */
-    .matrix-rain {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.1;
-    }
-
-    .matrix-column {
-      position: absolute;
-      top: -100%;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 14px;
-      color: var(--green);
-      animation: matrix-fall linear infinite;
-    }
-
-    @keyframes matrix-fall {
-      to {
-        transform: translateY(100vh);
-      }
-    }
-
-    /* Main Container */
-    .container {
       display: flex;
-      min-height: 100vh;
+      flex-direction: row;
       position: relative;
-      z-index: 1;
+      flex-wrap: wrap;
     }
 
-    /* Sidebar */
-    .sidebar {
-      width: 350px;
-      background: linear-gradient(135deg, #0f0f0f, #1a0a1f);
-      border-right: 2px solid var(--purple);
-      padding: 2rem;
+    body::before,
+    body::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    body::before {
+      background: radial-gradient(circle at center, rgba(161, 0, 255, 0.07), transparent 60%);
+      animation: pulseBg 15s infinite ease-in-out;
+    }
+
+    body::after {
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 49px, var(--grid) 50px),
+        repeating-linear-gradient(90deg, transparent, transparent 49px, var(--grid) 50px);
+      pointer-events: none;
+    }
+
+    @keyframes pulseBg {
+      0%, 100% { transform: scale(1); opacity: 0.05; }
+      50% { transform: scale(1.2); opacity: 0.12; }
+    }
+
+    .side {
+      flex: 1 1 100%;
+      max-width: 100%;
+      background: linear-gradient(to bottom right, #0f0f0f, #1a0a1f);
+      border-right: 1px solid var(--accent-fade);
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .sidebar::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: radial-gradient(circle at center, rgba(161, 0, 255, 0.1), transparent 70%);
-      animation: pulse 3s infinite ease-in-out;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 0.7; }
-    }
-
-    .profile-section {
-      text-align: center;
-      z-index: 2;
-      position: relative;
+      justify-content: center;
+      z-index: 1;
+      padding: 2rem;
     }
 
     .avatar {
-      width: 120px;
-      height: 120px;
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
       border: 3px solid var(--purple);
       overflow: hidden;
-      margin-bottom: 1rem;
-      position: relative;
-      animation: glow 2s infinite alternate;
+      margin-bottom: 1.5rem;
+      animation: pulseBeat 0.92s infinite;
     }
 
-    @keyframes glow {
-      from { box-shadow: 0 0 20px var(--purple); }
-      to { box-shadow: 0 0 30px var(--purple), 0 0 40px var(--purple); }
+    @keyframes pulseBeat {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0px var(--purple); }
+      50% { transform: scale(1.08); box-shadow: 0 0 15px var(--purple); }
     }
 
     .avatar img {
@@ -131,702 +99,226 @@
     }
 
     .name {
-      font: 2rem 'Share Tech Mono', monospace;
+      font: 1.8rem 'Share Tech Mono', monospace;
+      letter-spacing: 2px;
       color: var(--purple);
-      margin-bottom: 0.5rem;
-      text-shadow: 0 0 10px var(--purple);
+      text-align: center;
     }
 
-    .title {
-      font-size: 1rem;
-      color: var(--green);
-      margin-bottom: 1.5rem;
-      font-family: 'Share Tech Mono', monospace;
-    }
-
-    .status {
+    .socials {
+      margin-top: 2rem;
       display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.9rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
+    .socials a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background-color: rgba(161, 0, 255, 0.1);
+      border: 2px solid var(--purple);
       border-radius: 50%;
-      background: var(--green);
-      animation: blink 1s infinite;
+      box-shadow: 0 0 10px rgba(161, 0, 255, 0.3);
+      transition: all var(--transition);
+    }
+
+    .socials a:hover {
+      transform: scale(1.15);
+      background-color: var(--purple);
+      box-shadow: 0 0 18px rgba(161, 0, 255, 0.6);
+    }
+
+    .socials img {
+      width: 24px;
+      height: 24px;
+      filter: invert(1);
+    }
+
+    .main {
+      flex: 1 1 100%;
+      max-width: 100%;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .terminal {
+      background-color: rgba(255, 255, 255, 0.01);
+      border: 1px solid var(--accent-fade);
+      border-radius: 8px;
+      padding: 2rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .terminal::before {
+      content: "> Accessing profile...";
+      display: block;
+      margin-bottom: 1rem;
+      color: var(--purple);
+      animation: blink 1s infinite step-end;
     }
 
     @keyframes blink {
       50% { opacity: 0; }
     }
 
-    .stats {
-      width: 100%;
-      margin-bottom: 2rem;
-    }
-
-    .stat-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.8rem;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.85rem;
-    }
-
-    .stat-bar {
-      width: 60%;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .stat-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--purple), var(--green));
-      border-radius: 2px;
-      animation: fill 2s ease-out;
-    }
-
-    @keyframes fill {
-      from { width: 0; }
-    }
-
-    .socials {
-      display: flex;
-      gap: 1rem;
-      margin-top: auto;
-    }
-
-    .social-link {
-      width: 40px;
-      height: 40px;
-      border: 2px solid var(--purple);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all var(--transition);
-      background: rgba(161, 0, 255, 0.1);
-    }
-
-    .social-link:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px var(--purple);
-      background: var(--purple);
-    }
-
-    .social-link img {
-      width: 20px;
-      height: 20px;
-      filter: invert(1);
-    }
-
-    /* Main Content */
-    .main-content {
-      flex: 1;
-      padding: 2rem;
-      overflow-y: auto;
-    }
-
-    .terminal {
-      background: rgba(0, 0, 0, 0.8);
-      border: 2px solid var(--purple);
-      border-radius: 10px;
-      padding: 1.5rem;
-      font-family: 'Share Tech Mono', monospace;
-      position: relative;
-      backdrop-filter: blur(10px);
-    }
-
-    .terminal-header {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--purple);
-    }
-
-    .terminal-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
-
-    .dot-red { background: var(--red); }
-    .dot-yellow { background: #ffff00; }
-    .dot-green { background: var(--green); }
-
-    .terminal-title {
-      margin-left: auto;
-      color: var(--purple);
-      font-size: 0.9rem;
-    }
-
-    .command-line {
-      display: flex;
-      align-items: center;
-      margin-bottom: 1rem;
-      color: var(--green);
-    }
-
-    .prompt {
-      color: var(--purple);
-      margin-right: 0.5rem;
-    }
-
-    .typing-text {
-      border-right: 2px solid var(--green);
-      animation: typing 3s steps(40) infinite;
-    }
-
-    @keyframes typing {
-      0%, 50% { border-color: var(--green); }
-      51%, 100% { border-color: transparent; }
-    }
-
-    .section {
-      margin-bottom: 2rem;
-    }
-
-    .section-title {
-      color: var(--purple);
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .section-title::before {
-      content: ">";
-      color: var(--green);
-    }
-
-    .bio-text {
+    .bio-line {
       color: #ccc;
-      line-height: 1.6;
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
     }
 
-    .skills-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 0.8rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .skill-item {
-      background: linear-gradient(135deg, var(--purple-fade), rgba(0, 255, 65, 0.1));
-      border: 1px solid var(--purple);
-      padding: 0.8rem;
-      border-radius: 8px;
-      text-align: center;
-      transition: all var(--transition);
-      cursor: pointer;
-    }
-
-    .skill-item:hover {
-      transform: translateY(-5px) scale(1.05);
-      box-shadow: 0 10px 20px var(--purple-fade);
-      border-color: var(--green);
-    }
-
-    .skill-name {
-      font-weight: 600;
-      margin-bottom: 0.3rem;
-    }
-
-    .skill-level {
-      font-size: 0.8rem;
-      color: var(--green);
-    }
-
-    .projects-grid {
-      display: grid;
-      gap: 1.5rem;
-    }
-
-    .project-card {
-      background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(26, 10, 31, 0.8));
-      border: 2px solid transparent;
-      border-radius: 12px;
-      padding: 1.5rem;
-      transition: all var(--transition);
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .project-card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, var(--purple), var(--green));
-      opacity: 0;
-      transition: opacity var(--transition);
-      z-index: -1;
-    }
-
-    .project-card:hover::before {
-      opacity: 0.1;
-    }
-
-    .project-card:hover {
-      transform: translateY(-8px);
-      border-color: var(--purple);
-      box-shadow: 0 15px 30px rgba(161, 0, 255, 0.3);
-    }
-
-    .project-header {
+    .skills {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+
+    .skill {
+      background-color: var(--purple-fade);
+      border: 1px solid var(--purple);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: var(--white);
+      transition: transform var(--transition);
+    }
+
+    .skill:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 8px var(--purple);
+    }
+
+    .project-box {
+      margin-top: 2rem;
+      padding: 1.2rem;
+      background-color: #0d0d0d;
+      border-left: 4px solid var(--purple);
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(161, 0, 255, 0.1);
+      font-family: 'Share Tech Mono', monospace;
+      cursor: pointer;
+      transition: background-color var(--transition), transform var(--transition);
+    }
+
+    .project-box:hover {
+      background-color: rgba(161, 0, 255, 0.05);
+      transform: translateY(-3px);
+      box-shadow: 0 0 14px var(--accent-fade);
     }
 
     .project-title {
       color: var(--purple);
-      font-size: 1.3rem;
-      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
     }
 
-    .project-status {
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    .status-active {
-      background: rgba(0, 255, 65, 0.2);
-      color: var(--green);
-      border: 1px solid var(--green);
-    }
-
-    .status-development {
-      background: rgba(255, 255, 0, 0.2);
-      color: #ffff00;
-      border: 1px solid #ffff00;
-    }
-
-    .project-description {
-      color: #ccc;
-      line-height: 1.5;
-      margin-bottom: 1rem;
-    }
-
-    .project-tech {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
-
-    .tech-tag {
-      background: rgba(161, 0, 255, 0.2);
-      color: var(--purple);
-      padding: 0.3rem 0.6rem;
-      border-radius: 15px;
-      font-size: 0.8rem;
-      border: 1px solid var(--purple);
-    }
-
-    .project-stats {
-      display: flex;
-      gap: 1rem;
-      font-size: 0.9rem;
-    }
-
-    .stat {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      color: var(--green);
-    }
-
-    .code-snippet {
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid var(--purple);
-      border-radius: 8px;
-      padding: 1rem;
-      margin: 1rem 0;
-      font-family: 'Share Tech Mono', monospace;
+    .project-desc {
       font-size: 0.85rem;
-      overflow-x: auto;
+      color: #ccc;
+      line-height: 1.4;
     }
 
-    .code-line {
-      margin-bottom: 0.3rem;
+    .future-project {
+      margin-top: 2rem;
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--white);
+      padding: 1rem;
+      border-left: 4px solid #fff;
+      background-color: rgba(255, 255, 255, 0.02);
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
     }
 
-    .keyword { color: var(--purple); }
-    .string { color: var(--green); }
-    .comment { color: #666; }
+    .future-project-title {
+      color: var(--purple);
+      font-weight: bold;
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
 
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
+    .future-project-desc {
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    @media (min-width: 768px) {
+      .side {
+        flex: 0 0 35%;
+        max-width: 35%;
       }
-      
-      .sidebar {
-        width: 100%;
-        padding: 1rem;
+
+      .main {
+        flex: 0 0 65%;
+        max-width: 65%;
       }
-      
-      .main-content {
-        padding: 1rem;
-      }
-      
-      .skills-grid {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      }
-    }
-
-    /* Scrollbar Styling */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: var(--black);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--purple);
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--green);
     }
   </style>
 </head>
 <body>
-  <!-- Matrix Rain Effect -->
-  <div class="matrix-rain" id="matrixRain"></div>
-
-  <div class="container">
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="profile-section">
-        <div class="avatar">
-          <img src="https://kudos.tv/cdn/shop/files/Pixel_Landscape_300x.png?v=1679069333" alt="Relax Profile">
-        </div>
-        <div class="name">RELAX</div>
-        <div class="title">EXPLOIT DEVELOPER</div>
-        <div class="status">
-          <div class="status-dot"></div>
-          <span>ONLINE - CODING</span>
-        </div>
-      </div>
-
-      <div class="stats">
-        <div class="stat-item">
-          <span>LuaU</span>
-          <div class="stat-bar">
-            <div class="stat-fill" style="width: 95%;"></div>
-          </div>
-        </div>
-        <div class="stat-item">
-          <span>C++</span>
-          <div class="stat-bar">
-            <div class="stat-fill" style="width: 70%;"></div>
-          </div>
-        </div>
-        <div class="stat-item">
-          <span>Rev Eng</span>
-          <div class="stat-bar">
-            <div class="stat-fill" style="width: 90%;"></div>
-          </div>
-        </div>
-        <div class="stat-item">
-          <span>Exploits</span>
-          <div class="stat-bar">
-            <div class="stat-fill" style="width: 85%;"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="socials">
-        <a href="https://discord.com/users/1246471078486737037" target="_blank" class="social-link">
-          <img src="https://img.icons8.com/ios-filled/50/discord-logo.png" alt="Discord">
-        </a>
-      </div>
+  <div class="side">
+    <div class="avatar">
+      <img src="https://kudos.tv/cdn/shop/files/Pixel_Landscape_300x.png?v=1679069333" alt="Profile">
     </div>
+    <div class="name">Relax</div>
+    <div class="socials">
+      <a href="https://discord.com/users/1246471078486737037" target="_blank">
+        <img src="https://img.icons8.com/ios-filled/50/discord-logo.png" alt="Discord">
+      </a>
+    </div>
+  </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-      <div class="terminal">
-        <div class="terminal-header">
-          <div class="terminal-dot dot-red"></div>
-          <div class="terminal-dot dot-yellow"></div>
-          <div class="terminal-dot dot-green"></div>
-          <div class="terminal-title">relax@exploit-dev:~</div>
+  <div class="main">
+    <div class="terminal">
+      <div class="bio-line">-> // LuaU programmer and Creator of Lua Serverside</div>
+      <div class="bio-line">-> // Specialized in Reverse Engineering and Exploits Development</div>
+      <div class="bio-line">-> // Currently learning C++ and other programming languages</div>
+
+      <div class="skills">
+        <div class="skill">LuaU</div>
+        <div class="skill">C++</div>
+        <div class="skill">Reverse Engineering</div>
+        <div class="skill">Exploit Developer</div>
+      </div>
+
+      <div class="project-box" onclick="window.open('https://discord.gg/kAWEV4ec6K', '_blank')">
+        <div class="project-title">[ Lua Serverside ]</div>
+        <div class="project-desc">
+          Advanced executor that can execute serversided code in various Roblox games.
         </div>
+      </div>
 
-        <div class="command-line">
-          <span class="prompt">root@relax:~$</span>
-          <span class="typing-text">cat profile.txt</span>
+      <div class="project-box" onclick="window.open('https://discord.gg/exploiting', '_blank')">
+        <div class="project-title">[ Exoliner ]</div>
+        <div class="project-desc">
+          Infector on Exoliner Serverside.
         </div>
+      </div>
 
-        <div class="section">
-          <div class="section-title">ABOUT</div>
-          <div class="bio-text">
-            Advanced LuaU programmer specializing in serverside execution and exploit development.
-            Currently expanding skillset with C++ and low-level programming techniques.
-            Passionate about reverse engineering and creating tools that push boundaries.
-          </div>
+      <div class="project-box" onclick="window.open('https://discord.gg/Mwvj3zU6En', '_blank')">
+        <div class="project-title">[ Lunar Hub ]</div>
+        <div class="project-desc">
+          Mad City Season 7 cheat menu featuring Auto robbers, Server Crashers, Aimbots, and more.
         </div>
+      </div>
 
-        <div class="section">
-          <div class="section-title">SKILLS</div>
-          <div class="skills-grid">
-            <div class="skill-item">
-              <div class="skill-name">LuaU</div>
-              <div class="skill-level">Expert</div>
-            </div>
-            <div class="skill-item">
-              <div class="skill-name">C++</div>
-              <div class="skill-level">Learning</div>
-            </div>
-            <div class="skill-item">
-              <div class="skill-name">Reverse Eng</div>
-              <div class="skill-level">Advanced</div>
-            </div>
-            <div class="skill-item">
-              <div class="skill-name">Exploits</div>
-              <div class="skill-level">Expert</div>
-            </div>
-            <div class="skill-item">
-              <div class="skill-name">Assembly</div>
-              <div class="skill-level">Intermediate</div>
-            </div>
-            <div class="skill-item">
-              <div class="skill-name">Debugging</div>
-              <div class="skill-level">Advanced</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="section">
-          <div class="section-title">PROJECTS</div>
-          <div class="projects-grid">
-            <div class="project-card" onclick="window.open('https://discord.gg/kAWEV4ec6K', '_blank')">
-              <div class="project-header">
-                <div class="project-title">Lua Serverside</div>
-                <div class="project-status status-active">ACTIVE</div>
-              </div>
-              <div class="project-description">
-                Advanced serverside executor capable of running Lua code with elevated privileges across multiple Roblox games. Features custom injection techniques and anti-detection mechanisms.
-              </div>
-              <div class="project-tech">
-                <span class="tech-tag">LuaU</span>
-                <span class="tech-tag">C++</span>
-                <span class="tech-tag">Assembly</span>
-                <span class="tech-tag">Injection</span>
-              </div>
-              <div class="project-stats">
-                <div class="stat">
-                  <span>👥</span>
-                  <span>500+ Users</span>
-                </div>
-                <div class="stat">
-                  <span>⭐</span>
-                  <span>High Performance</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="project-card" onclick="window.open('https://discord.gg/exploiting', '_blank')">
-              <div class="project-header">
-                <div class="project-title">Exoliner</div>
-                <div class="project-status status-active">ACTIVE</div>
-              </div>
-              <div class="project-description">
-                Sophisticated infection system for Exoliner Serverside. Implements advanced payload delivery and persistence mechanisms.
-              </div>
-              <div class="project-tech">
-                <span class="tech-tag">LuaU</span>
-                <span class="tech-tag">Networking</span>
-                <span class="tech-tag">Persistence</span>
-              </div>
-              <div class="project-stats">
-                <div class="stat">
-                  <span>🔧</span>
-                  <span>Infector</span>
-                </div>
-                <div class="stat">
-                  <span>🛡️</span>
-                  <span>Stealth Mode</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="project-card" onclick="window.open('https://discord.gg/Mwvj3zU6En', '_blank')">
-              <div class="project-header">
-                <div class="project-title">Lunar Hub</div>
-                <div class="project-status status-active">ACTIVE</div>
-              </div>
-              <div class="project-description">
-                Comprehensive cheat suite for Mad City Season 7. Features automated robbery systems, server manipulation tools, and advanced aimbot with prediction algorithms.
-              </div>
-              <div class="project-tech">
-                <span class="tech-tag">LuaU</span>
-                <span class="tech-tag">GUI</span>
-                <span class="tech-tag">Automation</span>
-                <span class="tech-tag">Aimbot</span>
-              </div>
-              <div class="project-stats">
-                <div class="stat">
-                  <span>🎯</span>
-                  <span>Auto Systems</span>
-                </div>
-                <div class="stat">
-                  <span>💥</span>
-                  <span>Server Tools</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="project-card">
-              <div class="project-header">
-                <div class="project-title">Relaxed Obfuscator</div>
-                <div class="project-status status-development">IN DEVELOPMENT</div>
-              </div>
-              <div class="project-description">
-                Next-generation Lua obfuscator with advanced anti-reverse engineering techniques. Features multiple obfuscation layers and custom VM implementation.
-              </div>
-              <div class="project-tech">
-                <span class="tech-tag">C++</span>
-                <span class="tech-tag">LuaU</span>
-                <span class="tech-tag">Obfuscation</span>
-                <span class="tech-tag">VM</span>
-              </div>
-              <div class="project-stats">
-                <div class="stat">
-                  <span>🔒</span>
-                  <span>Multi-Layer</span>
-                </div>
-                <div class="stat">
-                  <span>⚡</span>
-                  <span>Custom VM</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="section">
-          <div class="section-title">CODE SAMPLE</div>
-          <div class="code-snippet">
-            <div class="code-line"><span class="comment">-- Advanced serverside injection technique</span></div>
-            <div class="code-line"><span class="keyword">local</span> <span class="keyword">function</span> injectPayload(target)</div>
-            <div class="code-line">    <span class="keyword">local</span> success = <span class="keyword">pcall</span>(<span class="keyword">function</span>()</div>
-            <div class="code-line">        <span class="comment">-- Bypass security checks</span></div>
-            <div class="code-line">        <span class="keyword">local</span> env = getfenv(target)</div>
-            <div class="code-line">        env.<span class="string">"_G"</span>.RELAX_PAYLOAD = <span class="keyword">true</span></div>
-            <div class="code-line">        <span class="comment">-- Execute with elevated privileges</span></div>
-            <div class="code-line">        loadstring(payload)()</div>
-            <div class="code-line">    <span class="keyword">end</span>)</div>
-            <div class="code-line">    <span class="keyword">return</span> success</div>
-            <div class="code-line"><span class="keyword">end</span></div>
-          </div>
+      <div class="future-project">
+        <div class="future-project-title">>> Future Project: Relaxed Obfuscator</div>
+        <div class="future-project-desc">
+          Upcoming Lua obfuscator designed to protect your code from reverse engineering.
         </div>
       </div>
     </div>
   </div>
 
-  <script>
-    // Matrix Rain Effect
-    function createMatrixRain() {
-      const container = document.getElementById('matrixRain');
-      const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-      
-      for (let i = 0; i < 50; i++) {
-        const column = document.createElement('div');
-        column.className = 'matrix-column';
-        column.style.left = Math.random() * 100 + '%';
-        column.style.animationDuration = (Math.random() * 3 + 2) + 's';
-        column.style.animationDelay = Math.random() * 2 + 's';
-        
-        let text = '';
-        for (let j = 0; j < 20; j++) {
-          text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
-        }
-        column.innerHTML = text;
-        
-        container.appendChild(column);
-      }
-    }
-
-    // Typing Animation
-    function typeWriter(element, text, speed = 50) {
-      let i = 0;
-      element.innerHTML = '';
-      
-      function type() {
-        if (i < text.length) {
-          element.innerHTML += text.charAt(i);
-          i++;
-          setTimeout(type, speed);
-        }
-      }
-      type();
-    }
-
-    // Skill hover effects
-    document.querySelectorAll('.skill-item').forEach(skill => {
-      skill.addEventListener('mouseenter', function() {
-        this.style.background = 'linear-gradient(135deg, var(--purple), var(--green))';
-      });
-      
-      skill.addEventListener('mouseleave', function() {
-        this.style.background = 'linear-gradient(135deg, var(--purple-fade), rgba(0, 255, 65, 0.1))';
-      });
-    });
-
-    // Initialize effects
-    document.addEventListener('DOMContentLoaded', function() {
-      createMatrixRain();
-      
-      // Animate typing text
-      const typingElement = document.querySelector('.typing-text');
-      if (typingElement) {
-        typeWriter(typingElement, 'cat profile.txt', 100);
-      }
-    });
-
-    // Add glitch effect on hover for project cards
-    document.querySelectorAll('.project-card').forEach(card => {
-      card.addEventListener('mouseenter', function() {
-        this.style.animation = 'glitch 0.3s ease-in-out';
-      });
-    });
-
-    // Add CSS for glitch animation
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes glitch {
-        0% { transform: translateY(-8px) translateX(0); }
-        20% { transform: translateY(-8px) translateX(-2px); }
-        40% { transform: translateY(-8px) translateX(2px); }
-        60% { transform: translateY(-8px) translateX(-1px); }
-        80% { transform: translateY(-8px) translateX(1px); }
-        100% { transform: translateY(-8px) translateX(0); }
-      }
-    `;
-    document.head.appendChild(style);
-  </script>
+  <audio src="omae.mp3" autoplay loop></audio>
 </body>
 </html>
